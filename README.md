@@ -20,6 +20,9 @@
 - al eliminar la cuenta, se debe eliminarse toda la información de Cloudinary.
 - los datos no se pueden duplicar.
 
+## Instalación:
+ - para poder correr el programa hay que tener instalado el NodeJs u sus dependecias.
+
 
 ## Autor:
  - Nombre: Erika Bausyte
