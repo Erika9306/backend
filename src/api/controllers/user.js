@@ -1,3 +1,5 @@
+
+const { deleteFile } = require('../../utils/deleteFile');
 const User = require('../models/User');
 
 const getUser = async (req, res,next)=>{
@@ -24,12 +26,15 @@ const postUser = async (req, res,next) => {
     try{
 
         const newUser = new User({
+
             email: req.body.email,
             password: req.body.password,
-            role: req.body.role,
+            role: req.body.role,  
+            img: req.body.img,          
             courses: req.body.courses
+            
         });
-         
+                
         const createdUser = await newUser.save();
         return res.status(201).json(createdUser);
 
@@ -42,13 +47,15 @@ const postUser = async (req, res,next) => {
 const deleteUser = async (req, res,next) => {
     try{
         const {id} = req.params;
-        const user = await User.findById(id);
-        
-        if(user._id != user || user.role != 'admin'){
-            return res.status(403).json({messsage: "You are not allowed to realize this action"});
+        const user = await User.findById(id);      
+       if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+        if(user.image && user.image.url){
+            await deleteFile(user.image.url);
         }
         await User.findByIdAndDelete(id);
-        return res(200).json({message: "User has been deleted"});
+        return res.status(200).json({message: "User has been deleted"});
         
     }catch(err){
          return next(err);
@@ -57,10 +64,9 @@ const deleteUser = async (req, res,next) => {
 
 const updateUser = async (req, res,next) => {
     try{
-    const {id} = req.body;
-    const userModify = new User(req.body);
-    userModify._id = id;
-    const userUpdated = await User.findByIdAndUpdate(id, userModify, {new:true});
+    const {id} = req.params;
+    const user = req.body;    
+    const userUpdated = await User.findByIdAndUpdate(id, user, {new:true});
     return res.status(200).json(userUpdated);
     }catch(error){
         return next(error);

@@ -7,15 +7,13 @@ const Course = require('../models/Course');
 
     const login = async (req,res) => {
         try{
-            const {email, password} = req.body;
+            const {email, password} = req.body;            
             console.log("datos recibidos en login", {email, password});
            
             if(!email || !password){
                 return res.status(404).json('Enter your email or password correctly');
             }
             const user = await User.findOne({email});
-            console.log("User has been found", user);
-
             if(!user){
                 return res.status(404).json('User not found', user);
             }
@@ -25,7 +23,10 @@ const Course = require('../models/Course');
             if(!isMatch){
                 return res.status(400).json('Wrong password');
             }
-            const token = generateToken(user);
+
+            //se usa el _id de usuario encontrado porque en el login no hay id en url
+            //no se pasa ni contraseña ni info sensible de usaurio 
+            const token = generateToken(user._id);
             return res.status(200).json({
                 message:" Logged in!",
                 token})
@@ -82,5 +83,25 @@ const Course = require('../models/Course');
 
     }
 
+    const allowToChangeRole = async(req,res,next) => {
+        try{
+            const user = req.user;
+            const userId = req.params.id;
+            const findUser = await User.findById(userId);
+
+            if(!findUser){
+                return res.status(404).send({message: 'User not found'});
+
+            }
+            if(user.role !== 'admin'){
+                return res.status(403).send({message: 'Admin permissions required'});
+            }
+
+            next();
+        }catch(err){
+            next(err);
+        }
+    }
+
     
-    module.exports = { login, allowDeleteUser, allowToAdminCourse}
+    module.exports = { login, allowDeleteUser, allowToAdminCourse, allowToChangeRole}

@@ -83,10 +83,10 @@ const updateCourse = async (req, res, next) => {
     try {
         //Recuperamos el id de la url
         const { id } = req.params;        
-        const courseModify = new Course(req.body);        
-        courseModify._id = id;
+        const course = req.body;        
+       
         // la opción new: true nos permitirá ver el documento ya actualizado en lugar del anterior a ser actualizado
-        const courseUpdated = await Course.findByIdAndUpdate(id , courseModify, {new: true});
+        const courseUpdated = await Course.findByIdAndUpdate(id , course, {new: true});
         return res.status(200).json(courseUpdated);
     } catch (error) {
         return next(error);
