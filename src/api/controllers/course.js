@@ -30,7 +30,7 @@ const postCourse = async (req, res) => {
   try {
     // Verifica si el archivo llega correctamente
     console.log("File received:", req.file); 
-    console.log("Dat received:", req.body);
+    console.log("Data received:", req.body);
 
     if (!req.file) {
       return res.status(400).json({ message: "No image file uploaded" });

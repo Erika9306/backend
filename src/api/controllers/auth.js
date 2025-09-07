@@ -2,22 +2,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const {generateToken} = require('../../utils/jwt');
-
-const register = async (req, res) => {
-    try{
-        const user = new User(req.body);
-        const userExists = await User.findOne({email: user.email});
-        if(userExists){
-            return res.status(400).json('User already exists');
-        }
-        const newUser = await user.save();
-          console.log("Usuario creado:", newUser);
-        return res.status(201).json({ message: 'User has been created', user: newUser });
-
-        }catch(err){
-            return res.status(400).json(err);
-        }
-    }
+const Course = require('../models/Course');
 
 
     const login = async (req,res) => {
@@ -49,7 +34,53 @@ const register = async (req, res) => {
                        
             return res.status(400).json({message: "Something went wrong while login", error: err.message});
         }
+        
+    }
+
+
+    const allowDeleteUser = async (req, res, next) => {
+        try{
+            const user = req.user;
+            const {id} = req.params;
+            const userDb = await User.findById(user._id);
+            if(!userDb){
+                return res.status(404).send({message:'User not Found'});
+            }
+            //para poder borrar cualquier usuario
+            if(userDb.role == 'admin'){
+                next();
+            }
+
+            //solo puede borrar lo suyo
+            if(user._id !== id){
+                return res.status(403).send({message: 'You are not allow to delete any account except yours'});
+            }
+
+            next();
+        }catch(err){
+            next(err);
+        }
+    }
+
+    const allowToAdminCourse = async (req, res, next) => {
+          try{
+            const user = req.user;
+            const course = req.params.id;            
+            const courseDb = await Course.findById(course);
+            if(!courseDb){
+                return res.status(404).send({message:'Course not Found'});
+            }
+            //para poder borrar cualquier usuario
+            if(user.role !== 'admin' ){
+               return res.status(403).send({message:'Do not have enough permissions'});
+            }
+           
+            next();
+        }catch(err){
+            next(err);
+        }
 
     }
 
-    module.exports = {register, login}
+    
+    module.exports = { login, allowDeleteUser, allowToAdminCourse}
