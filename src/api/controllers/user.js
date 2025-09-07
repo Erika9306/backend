@@ -24,10 +24,10 @@ const postUser = async (req, res,next) => {
     try{
 
         const newUser = new User({
-              email: req.body.email,
-               password: req.body.password,
-               role: req.body.role,
-               courses: req.body.courses
+            email: req.body.email,
+            password: req.body.password,
+            role: req.body.role,
+            courses: req.body.courses
         });
          
         const createdUser = await newUser.save();
@@ -44,10 +44,9 @@ const deleteUser = async (req, res,next) => {
         const {id} = req.params;
         const user = await User.findById(id);
         
-        if(user._id != user || !user.role != 'admin'){
+        if(user._id != user || user.role != 'admin'){
             return res.status(403).json({messsage: "You are not allowed to realize this action"});
         }
-
         await User.findByIdAndDelete(id);
         return res(200).json({message: "User has been deleted"});
         

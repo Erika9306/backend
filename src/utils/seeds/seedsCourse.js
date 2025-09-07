@@ -7,6 +7,7 @@ const thowSeed = async()=>{
   try{
     await mongoose.connect("mongodb+srv://ErikaDataBase:yJI1eQoUTlRxVyKT5qygMOevHgcpU-lNz7wrsyP6KWo@mycluster.zdwx53j.mongodb.net/?retryWrites=true&w=majority&appName=MyCluster"
           );
+          console.log('Connected to MongoDB');
           //borramos si hay cursos previos
         await Course.collection.drop();
         console.log('Courses have been deleted');
@@ -22,9 +23,11 @@ const thowSeed = async()=>{
   }catch(err){
     console.log('Could not proccess the seed insertion');
     
-  }
+  }finally{
+    await mongoose.disconnect();
+    console.log('Disconnected from MongoDB');
 
-
   }
+  };
 
   thowSeed();

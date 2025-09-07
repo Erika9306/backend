@@ -26,11 +26,10 @@ const register = async (req, res) => {
             console.log("datos recibidos en login", {email, password});
            
             if(!email || !password){
-                return res.status(404).json('Enter  youe email or password correctly');
+                return res.status(404).json('Enter your email or password correctly');
             }
-
             const user = await User.findOne({email});
-            console.log("User found", user);
+            console.log("User has been found", user);
 
             if(!user){
                 return res.status(404).json('User not found', user);
@@ -39,22 +38,18 @@ const register = async (req, res) => {
             // comprobamos la contraseña del usuario
             const isMatch = bcrypt.compareSync(String(password), String (user.password));
             if(!isMatch){
-                return res.status(400).json('Wrong password')
+                return res.status(400).json('Wrong password');
             }
             const token = generateToken(user);
             return res.status(200).json({
-                message:" Logged in !",
+                message:" Logged in!",
                 token})
 
         }catch(err){
                        
-            return res.status(400).json({message: "Something wrong while login", error: err.message});
+            return res.status(400).json({message: "Something went wrong while login", error: err.message});
         }
 
     }
-
-
-
-
 
     module.exports = {register, login}

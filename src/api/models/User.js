@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema (
     { 
         email: {type:String, required: true, unique: true,  maxLength: 30, trim: true},
-        password: {type: String, required: true, minLength: [3, "Password should have at least 3 characters"], maxLength: 30, trim: true},
+        password: {type: String, required: true, minLength: [3, "Password must have at least 3 characters"], maxLength: 30, trim: true},
         role: {type:String, enum: ["admin","user"], default:"user"},
         courses: [{type: mongoose.Types.ObjectId, ref: "Course"}]
 },

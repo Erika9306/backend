@@ -28,8 +28,9 @@ const getCourses = async (req, res )=>{
 
 const postCourse = async (req, res) => {
   try {
-    console.log("Archivo recibido:", req.file); // Verifica si el archivo llega correctamente
-    console.log("Datos recibidos:", req.body);
+    // Verifica si el archivo llega correctamente
+    console.log("File received:", req.file); 
+    console.log("Dat received:", req.body);
 
     if (!req.file) {
       return res.status(400).json({ message: "No image file uploaded" });
@@ -49,12 +50,12 @@ const postCourse = async (req, res) => {
     });
 
     const savedCourse = await newCourse.save();
-    console.log("Curso creado:", savedCourse);
+    console.log("The course has been created:", savedCourse);
 
     return res.status(201).json(savedCourse);
 
   } catch (err) {
-    console.error("Error creando el curso:", err.message);
+    console.error("Error while creating the course:", err.message);
     return res.status(500).json({ message: "Could not create the course", error: err.message });
   }
 };
@@ -81,10 +82,8 @@ const deleteCourse = async (req, res) => {
 const updateCourse = async (req, res, next) => {
     try {
         //Recuperamos el id de la url
-        const { id } = req.params;
-        //instanciamos un nuevo Character con la información del body
-        const courseModify = new Course(req.body) 
-        //añadimos la propiedad _id al personaje creado
+        const { id } = req.params;        
+        const courseModify = new Course(req.body);        
         courseModify._id = id;
         // la opción new: true nos permitirá ver el documento ya actualizado en lugar del anterior a ser actualizado
         const courseUpdated = await Course.findByIdAndUpdate(id , courseModify, {new: true});
@@ -93,8 +92,5 @@ const updateCourse = async (req, res, next) => {
         return next(error);
     }
   }
-
-
-
-
+  
 module.exports = {getCourse, getCourses, postCourse, deleteCourse, updateCourse};

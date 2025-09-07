@@ -8,13 +8,12 @@ const isAuth = async (req,res,next) => {
     //devolvemos el último elemento con el metodo pop()
     const token = req.headers.authorization.split(' ').pop();
 
-    const tokenVerified = await verifyToken(token);
+    const tokenVerified =  verifyToken(token);
     console.log(tokenVerified);   
      
     if(tokenVerified._id){
         next();
     }
-
     }catch(err){
         return res.status(401).json({message: "Access denied", error: err.message});
     }
